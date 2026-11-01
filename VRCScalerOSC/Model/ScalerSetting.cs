@@ -17,6 +17,7 @@ namespace VRCScalerOSC.Model
         public float FormScalingTime = 3f;
         public float FormScalingRate = 2f;
         public bool FormFixedRate = true;
+        public bool FormMSRate = true;
         public bool FormAutoAbort = true;
         public float MaxHeight = 10000f;
         public float MinHeight = 0.01f;

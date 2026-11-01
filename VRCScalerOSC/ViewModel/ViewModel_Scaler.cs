@@ -60,6 +60,9 @@ namespace VRCScalerOSC.ViewModel
         private bool _fixedRate = true;
         public bool FixedRate { get => _fixedRate; set => SetProperty(ref _fixedRate, value); }
 
+        private bool _msRate = false;
+        public bool MSRate { get => _msRate; set => SetProperty(ref _msRate, value); }
+
         private bool _isMultiplier = false;
         public bool IsMultiplier { get => _isMultiplier; set => SetProperty(ref _isMultiplier, value); }
 
@@ -111,6 +114,9 @@ namespace VRCScalerOSC.ViewModel
 
         private float _scalingRate = 2f;
         public float ScalingRate { get => _scalingRate; set => SetProperty(ref _scalingRate, value); }
+        
+        private float _scalingMS = 0f;
+        public float ScalingMS { get => _scalingMS; set => SetProperty(ref _scalingMS, value); }
 
         private float _iterativeRate = 0f;
         public float IterativeRate { get => _iterativeRate; set => SetProperty(ref _iterativeRate, value); }

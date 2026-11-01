@@ -588,6 +588,34 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                 controller.StopScaling(); //Stop Scaling
                 service?.SendOscMessage(OSCData.GetFalseOSCData(data.Addr, data.TypeString));
             });
+            functions.AddEvent($"{controller.ScalerOSCPathPrefix}/ScaleState", (isInitialized, service, data) =>
+            {
+                if (data.ValueF.HasValue)
+                {
+                    if (data.ValueF > 0.001f)
+                    {
+                        controller.ScaleGrowUp();
+                    }
+                    else if (data.ValueF < -0.001f)
+                    {
+                        controller.ScaleShrinkDown();
+                    }
+                    else
+                    {
+                        controller.StopScaling(); //Stop Scaling
+                        service?.SendOscMessage(OSCData.GetFalseOSCData(data.Addr, data.TypeString));
+                    }
+                }
+            });
+            functions.AddEvent($"{controller.ScalerOSCPathPrefix}/SetScaleMS", (isInitialized, service, data) =>
+            {
+                if (data.ValueF.HasValue)
+                {
+                    controller.SetMSRate(true);
+                    controller.SetFixedRate(false);
+                    controller.SetScalingTimeByMS(data.ValueF.Value);
+                }
+            });
             functions.AddEvent($"{controller.ScalerOSCPathPrefix}/BackAvatarDefaultHeight", (isInitialized, service, data) =>
             {
                 if (isInitialized && data.ValueB.HasValue && data.ValueB.Value)
