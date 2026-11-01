@@ -115,8 +115,8 @@ namespace VRCScalerOSC.ViewModel
         private double _scalingRate = 2f;
         public double ScalingRate { get => _scalingRate; set => SetProperty(ref _scalingRate, value); }
         
-        private float _scalingCms = 0f;
-        public float ScalingCMS { get => _scalingCms; set => SetProperty(ref _scalingCms, value); }
+        private double _scalingCms = 0f;
+        public double ScalingCMS { get => _scalingCms; set => SetProperty(ref _scalingCms, value); }
 
         private double _iterativeRate = 0f;
         public double IterativeRate { get => _iterativeRate; set => SetProperty(ref _iterativeRate, value); }

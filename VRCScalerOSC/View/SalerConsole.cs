@@ -306,7 +306,7 @@ namespace VRCScalerOSC.View
                 _controller_Scaler.OSCSetup();
                 _controller_Scaler.OSCSetup();
             }
-            else if (commandOrder.Length == 2 && float.TryParse(commandOrder[1].Trim('m').Trim('x').Trim('p').Trim(), out float valueF))
+            else if (commandOrder.Length == 2 && double.TryParse(commandOrder[1].Trim('m').Trim('x').Trim('p').Trim(), out double valueD))
             {
                 if (commandOrder[0] == "t")
                 {
@@ -314,7 +314,7 @@ namespace VRCScalerOSC.View
                     _viewModelScaler.CMSRate = false;
                     _controller_Scaler.SetFixedRate(_viewModelScaler.FixedRate);
                     _controller_Scaler.SetCMSRate(_viewModelScaler.CMSRate);
-                    _controller_Scaler.SetScalingTime(valueF);
+                    _controller_Scaler.SetScalingTime(valueD);
                 }
                 if (commandOrder[0] == "cms")
                 {
@@ -322,7 +322,7 @@ namespace VRCScalerOSC.View
                     _viewModelScaler.CMSRate = true;
                     _controller_Scaler.SetFixedRate(_viewModelScaler.FixedRate);
                     _controller_Scaler.SetCMSRate(_viewModelScaler.CMSRate);
-                    _controller_Scaler.SetScalingTimeByCMS(valueF);
+                    _controller_Scaler.SetScalingTimeByCMS(valueD);
                 }
                 else if (commandOrder[0] == "r")
                 {
@@ -330,40 +330,40 @@ namespace VRCScalerOSC.View
                     _viewModelScaler.CMSRate = false;
                     _controller_Scaler.SetFixedRate(_viewModelScaler.FixedRate);
                     _controller_Scaler.SetCMSRate(_viewModelScaler.CMSRate);
-                    _controller_Scaler.SetScalingRate(valueF);
+                    _controller_Scaler.SetScalingRate(valueD);
                 }
                 else if (commandOrder[1].Last() == 'p')
                 {
-                    valueF = _viewModelScaler.CurrentEyeHeight * ((commandOrder[1].StartsWith('+') || commandOrder[1].StartsWith('-') ? 1f : 0f) + valueF / 100f);
+                    valueD = _viewModelScaler.CurrentEyeHeight * ((commandOrder[1].StartsWith('+') || commandOrder[1].StartsWith('-') ? 1f : 0f) + valueD / 100f);
                 }
                 if (commandOrder[0] == "h")
                 {
-                    _controller_Scaler.StartScaling(commandOrder[1].Last() == 'x', _viewModelScaler.FixedRate, valueF);
+                    _controller_Scaler.StartScaling(commandOrder[1].Last() == 'x', _viewModelScaler.FixedRate, valueD);
                 }
                 else if (commandOrder[0] == "s")
                 {
-                    _controller_Scaler.StartScaling(commandOrder[1].Last() == 'x', _viewModelScaler.FixedRate, valueF, _viewModelScaler.ScalingTime, _viewModelScaler.ScalingRate);
+                    _controller_Scaler.StartScaling(commandOrder[1].Last() == 'x', _viewModelScaler.FixedRate, valueD, _viewModelScaler.ScalingTime, _viewModelScaler.ScalingRate);
                 }
                 else if (commandOrder[0] == "g")
                 {
-                    _controller_Scaler.SetGestureScaling(Convert.ToInt32(valueF));
+                    _controller_Scaler.SetGestureScaling(Convert.ToInt32(valueD));
                 }
                 else if (commandOrder[0] == "m")
                 {
-                    _controller_Scaler.SetMaxEyeHeight(valueF);
+                    _controller_Scaler.SetMaxEyeHeight((float)valueD);
 
                 }
                 else if (commandOrder[0] == "n")
                 {
-                    _controller_Scaler.SetMinEyeHeight(valueF);
+                    _controller_Scaler.SetMinEyeHeight((float)valueD);
                 }
-                else if (commandOrder[0] == "q" && valueF >= 1 && valueF <= 25)
+                else if (commandOrder[0] == "q" && valueD >= 1 && valueD <= 25)
                 {
-                    _controller_Scaler.StartScaling(false, _viewModelScaler.FixedRate, _viewModelScaler.DefaultHeightValueList[Convert.ToInt32(valueF)]);
+                    _controller_Scaler.StartScaling(false, _viewModelScaler.FixedRate, _viewModelScaler.DefaultHeightValueList[Convert.ToInt32(valueD)]);
                 }
-                else if (commandOrder[0] == "w" && valueF >= 1 && valueF <= 25)
+                else if (commandOrder[0] == "w" && valueD >= 1 && valueD <= 25)
                 {
-                    _controller_Scaler.StartScaling(false, _viewModelScaler.FixedRate, _viewModelScaler.DefaultHeightValueList[Convert.ToInt32(valueF)], _viewModelScaler.ScalingTime, _viewModelScaler.ScalingRate);
+                    _controller_Scaler.StartScaling(false, _viewModelScaler.FixedRate, _viewModelScaler.DefaultHeightValueList[Convert.ToInt32(valueD)], _viewModelScaler.ScalingTime, _viewModelScaler.ScalingRate);
                 }
             }
             return true;
