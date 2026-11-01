@@ -311,37 +311,37 @@ namespace VRCScalerOSC.Controller
                 _serviceOSCProtocols?.SendOscMessage(OSCData.GetFalseOSCData(ScalerOSCPathPrefix + "/IsMultiplier", "F"));
             }
         }
-        public void SetScalingTime(float scalingTime)
+        public void SetScalingTime(double scalingTime)
         {
-            if (MathF.Abs(ViewModelScaler.ScalingTime - scalingTime) > 0.000000001f)
+            if (Math.Abs(ViewModelScaler.ScalingTime - scalingTime) > 0.000000001f)
             {
                 ViewModelScaler.ScalingTime = scalingTime;
-                ViewModelScaler.ScalingMS = 0f;
+                ViewModelScaler.ScalingCMS = 0f;
                 UpdateIterativeRateByTargetHeight(ViewModelScaler.TargetEyeHeight);
                 _serviceOSCProtocols?.SendOscMessage(new OSCData(ScalerOSCPathPrefix + "/ScalingTimeValue", "f", ViewModelScaler.ScalingTime));
             }
         }
-        public void SetScalingTimeByMS(float scalingMS)
+        public void SetScalingTimeByCMS(float scalingCMS)
         {
             float currentEyeHeight = ViewModelScaler.CurrentEyeHeight;
             float targetEyeHeight = ViewModelScaler.TargetEyeHeight;
-            float scalingTime = CalculateScalingTimeByMetersPerSecond(targetEyeHeight, currentEyeHeight, scalingMS);
+            double scalingTime = CalculateScalingTimeByCentimetersPerSecond(targetEyeHeight, currentEyeHeight, scalingCMS);
             
-            if (MathF.Abs(ViewModelScaler.ScalingTime - scalingTime) > 0.000000001f)
+            if (Math.Abs(ViewModelScaler.ScalingTime - scalingTime) > 0.000000001f)
             {
                 ViewModelScaler.ScalingTime = scalingTime;
-                ViewModelScaler.ScalingMS = scalingMS;
+                ViewModelScaler.ScalingCMS = scalingCMS;
                 UpdateIterativeRateByTargetHeight(ViewModelScaler.TargetEyeHeight);
                 _serviceOSCProtocols?.SendOscMessage(new OSCData(ScalerOSCPathPrefix + "/ScalingTimeValue", "f", ViewModelScaler.ScalingTime));
             }
         }
-        public void SetScalingRate(float scalingRate)
+        public void SetScalingRate(double scalingRate)
         {
             scalingRate = scalingRate < 1f ? 1f : scalingRate > 10000f ? 10000f : scalingRate;
             if (ViewModelScaler.ScalingRate != scalingRate)            {
                 ViewModelScaler.ScalingRate = scalingRate;
-                ViewModelScaler.ScalingMS = 0f;
-                ViewModelScaler.IterativeRate = MathF.Pow(scalingRate, 1.0f / ViewModelScaler.SmoothScalingIterativeTimesPerSecond);
+                ViewModelScaler.ScalingCMS = 0f;
+                ViewModelScaler.IterativeRate = Math.Pow(scalingRate, 1.0f / ViewModelScaler.SmoothScalingIterativeTimesPerSecond);
                 UpdateScalingTimeByTargetHeight(ViewModelScaler.TargetEyeHeight);
                 _serviceOSCProtocols?.SendOscMessage(new OSCData(ScalerOSCPathPrefix + "/ScalingRateValue", "f", ViewModelScaler.ScalingRate));
             }
@@ -361,13 +361,13 @@ namespace VRCScalerOSC.Controller
                 _serviceOSCProtocols?.SendOscMessage(OSCData.GetFalseOSCData(ScalerOSCPathPrefix + "/SwitchFixedRate ", "F"));
             }
         }
-        public void SetMSRate(bool toggle)
+        public void SetCMSRate(bool toggle)
         {
-            if (ViewModelScaler.MSRate != toggle)
+            if (ViewModelScaler.CMSRate != toggle)
             {
-                ViewModelScaler.MSRate = toggle;
+                ViewModelScaler.CMSRate = toggle;
             }
-            if (ViewModelScaler.MSRate)
+            if (ViewModelScaler.CMSRate)
             {
                 _serviceOSCProtocols?.SendOscMessage(OSCData.GetTrueOSCData(ScalerOSCPathPrefix + "/SwitchMSRate ", "T"));
             }
@@ -498,28 +498,33 @@ namespace VRCScalerOSC.Controller
                 }
             }
         }
-        public void ScaleGrowUp(float scalingRate = -1f)
+        public void ScaleGrowUp(double scalingRate = -1f, double scalingTime = -1f, float scalingCMS = -1f)
         {
             bool useCurrentRate = scalingRate == -1f;
             scalingRate = useCurrentRate ? ViewModelScaler.ScalingRate :
                 scalingRate > 1f ? 1f :
                 scalingRate < 0 ? 0 : scalingRate;          
+
+            bool useCurrentTime = scalingTime == -1f;
+            bool useCurrentCMS = scalingCMS == -1f;
+            scalingTime = useCurrentTime ? ViewModelScaler.ScalingTime : 
+                useCurrentCMS ? ViewModelScaler.ScalingCMS : CalculateScalingTimeByCentimetersPerSecond(ViewModelScaler.MaxEyeHeight, ViewModelScaler.CurrentEyeHeight, scalingCMS);
             
             if (scalingRate > 0.2f && ViewModelScaler.CurrentEyeHeight < 10000f)
             {
-                if (scalingRate > 0.99f || MathF.Abs(ViewModelScaler.PrevScalingRate - scalingRate) > 0.2f)
+                if (scalingRate > 0.99f || Math.Abs(ViewModelScaler.PrevScalingRate - scalingRate) > 0.2f)
                 {
                     if (_isInitialized && _serviceOSCProtocols != null)
                     {
                         if (ViewModelScaler.CurrentTargetEyeHeight <= 1 || !ViewModelScaler.IsScalingRunning)
                         {
                             Debug.WriteLine($"ScaleGrowUp rate{scalingRate} StartScaling");
-                            StartScaling(false, true, 10000f, -1f, useCurrentRate ? scalingRate : 1.0f + 0.5f * (scalingRate - 0.2f) / 0.8f); //Grow Up to max
+                            StartScaling(false, ViewModelScaler.FixedRate, ViewModelScaler.MaxEyeHeight, ViewModelScaler.FixedRate ? -1f : scalingTime, useCurrentRate ? scalingRate : 1.0f + 0.5f * (scalingRate - 0.2f) / 0.8f); //Grow Up to max
                         }
                         else if (ViewModelScaler.PrevScalingRate < 0.99f)
                         {
                             Debug.WriteLine($"ScaleGrowUp rate{scalingRate} UpdateIterativeRate");
-                            _scaleData?.UpdateIterativeRate(MathF.Pow(1.0f + 0.5f * (scalingRate - 0.2f) / 0.8f, 1.0f / ViewModelScaler.SmoothScalingIterativeTimesPerSecond));
+                            _scaleData?.UpdateIterativeRate(Math.Pow(1.0f + 0.5f * (scalingRate - 0.2f) / 0.8f, 1.0f / ViewModelScaler.SmoothScalingIterativeTimesPerSecond));
                         }
                     }
                     ViewModelScaler.PrevScalingRate = scalingRate;
@@ -536,28 +541,33 @@ namespace VRCScalerOSC.Controller
                 }
             }
         }
-        public void ScaleShrinkDown(float scalingRate = -1f)
+        public void ScaleShrinkDown(double scalingRate = -1f, double scalingTime = -1f, float scalingCMS = -1f)
         {
             bool useCurrentRate = scalingRate == -1f;
             scalingRate = useCurrentRate ? ViewModelScaler.ScalingRate :
                 scalingRate > 1f ? 1f :
-                scalingRate < 0 ? 0 : scalingRate;            
+                scalingRate < 0 ? 0 : scalingRate;          
+
+            bool useCurrentTime = scalingTime == -1f;
+            bool useCurrentCMS = scalingCMS == -1f;
+            scalingTime = useCurrentTime ? ViewModelScaler.ScalingTime : 
+                useCurrentCMS ? ViewModelScaler.ScalingCMS : CalculateScalingTimeByCentimetersPerSecond(ViewModelScaler.MaxEyeHeight, ViewModelScaler.CurrentEyeHeight, scalingCMS);
             
             if (scalingRate > 0.2f && ViewModelScaler.CurrentEyeHeight > 0.011f)
             {
-                if (scalingRate > 0.99f || MathF.Abs(ViewModelScaler.PrevScalingRate - scalingRate) > 0.2f)
+                if (scalingRate > 0.99f || Math.Abs(ViewModelScaler.PrevScalingRate - scalingRate) > 0.2f)
                 {
                     if (_isInitialized && _serviceOSCProtocols != null)
                     {
                         if (ViewModelScaler.CurrentTargetEyeHeight >= 1 || !ViewModelScaler.IsScalingRunning)
                         {
                             Debug.WriteLine($"ScaleShrinkDown rate{scalingRate} StartScaling");
-                            StartScaling(false, true, 0.01f, -1f, useCurrentRate ? scalingRate : 1.0f - 0.5f * (scalingRate - 0.2f) / 0.8f); //Shrink Down to min
+                            StartScaling(false, ViewModelScaler.FixedRate, ViewModelScaler.MinEyeHeight, ViewModelScaler.FixedRate ? -1f : scalingTime, useCurrentRate ? scalingRate : 1.0f + 0.5f * (scalingRate - 0.2f) / 0.8f); //Grow Up to max
                         }
                         else if (ViewModelScaler.PrevScalingRate < 0.99)
                         {
                             Debug.WriteLine($"ScaleShrinkDown rate{scalingRate} UpdateIterativeRate");
-                            _scaleData?.UpdateIterativeRate(MathF.Pow(1.0f - 0.5f * (scalingRate - 0.2f) / 0.8f, 1.0f / ViewModelScaler.SmoothScalingIterativeTimesPerSecond));
+                            _scaleData?.UpdateIterativeRate(Math.Pow(1.0f - 0.5f * (scalingRate - 0.2f) / 0.8f, 1.0f / ViewModelScaler.SmoothScalingIterativeTimesPerSecond));
                         }
                     }
                     ViewModelScaler.PrevScalingRate = scalingRate;
@@ -598,7 +608,7 @@ namespace VRCScalerOSC.Controller
         {
             StartScaling(ViewModelScaler.IsMultiplier, false, eyeHeight, time);
         }
-        public void StartScaling(bool isMultiplier, bool fixedRate, float eyeHeight = -1f, float time = 0f, float rate = float.MaxValue)
+        public void StartScaling(bool isMultiplier, bool fixedRate, double eyeHeight = -1f, double time = 0f, double rate = double.MaxValue)
         {
             if (!ViewModelScaler.IsOSCRunning || eyeHeight == 0 || _isInDelay)
             {
@@ -634,10 +644,10 @@ namespace VRCScalerOSC.Controller
 
             OptimizationSmoothScalingIterativeTimes();
 
-            float iterativeRate;
+            double iterativeRate;
             if (fixedRate && rate < 10000 && rate > 0) // fixedRate with rate value
             {
-                iterativeRate = MathF.Pow(rate, 1.0f / ViewModelScaler.SmoothScalingIterativeTimesPerSecond);
+                iterativeRate = Math.Pow(rate, 1.0f / ViewModelScaler.SmoothScalingIterativeTimesPerSecond);
                 if (time >= 0)
                 {
                     UpdateScalingTimeByTargetHeight(eyeHeight);
@@ -648,9 +658,9 @@ namespace VRCScalerOSC.Controller
             {
                 iterativeRate = 1f;
             }
-            else if (ViewModelScaler.MSRate)
+            else if (ViewModelScaler.CMSRate)
             {
-                time = CalculateScalingTimeByMetersPerSecond(eyeHeight, ViewModelScaler.CurrentEyeHeight, ViewModelScaler.ScalingMS);
+                time = CalculateScalingTimeByCentimetersPerSecond(eyeHeight, ViewModelScaler.CurrentEyeHeight, ViewModelScaler.ScalingCMS);
                 iterativeRate = CaculateIterativeRateByTime(time, eyeHeight, ViewModelScaler.CurrentEyeHeight, ViewModelScaler.SmoothScalingIterativeTimesPerSecond);
                 ViewModelScaler.ScalingTime = time;
                 ViewModelScaler.ScalingRate = iterativeRate;
@@ -711,7 +721,6 @@ namespace VRCScalerOSC.Controller
             {
                 FinalChangeEyeHeight(_scaleData.HeightTarget);
             }
-
         }
         public void StopScaling()
         {
@@ -722,7 +731,7 @@ namespace VRCScalerOSC.Controller
         }
         private void OptimizationSmoothScalingIterativeTimes()
         {
-            float avgSenderTaskExecutionTime = 0f;
+            double avgSenderTaskExecutionTime = 0f;
             if (_scaleData != null && _scaleData.RealScalingTime > 0)
             {
                 avgSenderTaskExecutionTime = 1000f * _scaleData.RealScalingTime / _scaleData.ScalingTime / _scaleData.SmoothScalingIterativeTimesPerSecond;
@@ -734,28 +743,28 @@ namespace VRCScalerOSC.Controller
                 ViewModelScaler.SmoothScalingIterativeTimesPerSecond = 1000f / avgSenderTaskExecutionTime;
             }
         }
-        private void UpdateIterativeRateByTargetHeight(float targetEyeHeight)
+        private void UpdateIterativeRateByTargetHeight(double targetEyeHeight)
         {
-            if (MathF.Abs(targetEyeHeight - ViewModelScaler.CurrentEyeHeight) / ViewModelScaler.CurrentEyeHeight > 0.01)
+            if (Math.Abs(targetEyeHeight - ViewModelScaler.CurrentEyeHeight) / ViewModelScaler.CurrentEyeHeight > 0.01)
             {
-                float prevValue = ViewModelScaler.IterativeRate;
-                float newValue = CaculateIterativeRateByTime(ViewModelScaler.ScalingTime, targetEyeHeight, ViewModelScaler.CurrentEyeHeight, ViewModelScaler.SmoothScalingIterativeTimesPerSecond);
-                if (MathF.Abs(prevValue - newValue) > 0.000000001f)
+                double prevValue = ViewModelScaler.IterativeRate;
+                double newValue = CaculateIterativeRateByTime(ViewModelScaler.ScalingTime, targetEyeHeight, ViewModelScaler.CurrentEyeHeight, ViewModelScaler.SmoothScalingIterativeTimesPerSecond);
+                if (Math.Abs(prevValue - newValue) > 0.000000001f)
                 {
                     ViewModelScaler.IterativeRate = newValue;
-                    ViewModelScaler.ScalingRate = MathF.Pow(ViewModelScaler.IterativeRate, ViewModelScaler.SmoothScalingIterativeTimesPerSecond);
+                    ViewModelScaler.ScalingRate = Math.Pow(ViewModelScaler.IterativeRate, ViewModelScaler.SmoothScalingIterativeTimesPerSecond);
                     Debug.WriteLine("{0:yyyy/MM/dd HH:mm:ss:fff} Set ScalingRate {1} => {2}", DateTime.Now, prevValue, ViewModelScaler.IterativeRate);
                     _serviceOSCProtocols?.SendOscMessage(new OSCData(ScalerOSCPathPrefix + "/ScalingRateValue", "f", ViewModelScaler.ScalingRate));
                 }
             }
         }
-        private void  UpdateScalingTimeByTargetHeight(float targetEyeHeight)
+        private void  UpdateScalingTimeByTargetHeight(double targetEyeHeight)
         {
-            if (MathF.Abs(targetEyeHeight - ViewModelScaler.CurrentEyeHeight) / ViewModelScaler.CurrentEyeHeight > 0.01f)
+            if (Math.Abs(targetEyeHeight - ViewModelScaler.CurrentEyeHeight) / ViewModelScaler.CurrentEyeHeight > 0.01f)
             {
-                float prevValue = ViewModelScaler.ScalingTime;
-                float newValue = CaculateScalingTimeByIterativeRate(ViewModelScaler.IterativeRate, targetEyeHeight, ViewModelScaler.CurrentEyeHeight, ViewModelScaler.SmoothScalingIterativeTimesPerSecond);
-                if (MathF.Abs(prevValue - newValue) > 0.000000001f)
+                double prevValue = ViewModelScaler.ScalingTime;
+                double newValue = CaculateScalingTimeByIterativeRate(ViewModelScaler.IterativeRate, targetEyeHeight, ViewModelScaler.CurrentEyeHeight, ViewModelScaler.SmoothScalingIterativeTimesPerSecond);
+                if (Math.Abs(prevValue - newValue) > 0.000000001f)
                 {
                     ViewModelScaler.ScalingTime = newValue;
                     Debug.WriteLine("{0:yyyy/MM/dd HH:mm:ss:fff} Set ScalingTime {1} => {2}", DateTime.Now, prevValue, ViewModelScaler.ScalingTime);
@@ -764,24 +773,20 @@ namespace VRCScalerOSC.Controller
                 _serviceOSCProtocols?.SendOscMessage(new OSCData(ScalerOSCPathPrefix + "/ScalingRateValue", "f", ViewModelScaler.ScalingRate));
             }
         }
-        public static float CalculateScalingTimeByMetersPerSecond(float eyeheightTarget, float eyeheightCurrent, float metersPerSecond)
+        public static double CalculateScalingTimeByCentimetersPerSecond(double eyeheightTarget, float eyeheightCurrent, float centimetersPerSecond)
         {
-            return Math.Abs(eyeheightCurrent - eyeheightTarget) / metersPerSecond;
+            return Math.Abs(eyeheightCurrent - eyeheightTarget) / (centimetersPerSecond / 100);
         }
-        public static float CalculateScalingMetersPerSecondByTime(float eyeheightTarget, float eyeheightCurrent, float duration)
-        {            
-            return Math.Abs(eyeheightCurrent - eyeheightTarget) / duration;
-        }
-        public static float CaculateIterativeRateByTime(float time, float eyeheightTarget, float eyeheightCurrent, float smoothScalingIterativeTimesPerSecond)
+        public static double CaculateIterativeRateByTime(double time, double eyeheightTarget, float eyeheightCurrent, double smoothScalingIterativeTimesPerSecond)
         {
-            float iterativeRate;
+            double iterativeRate;
             if (time <= 0)
             {
                 return 1f;
             }
             else
             {
-                iterativeRate = MathF.Pow(eyeheightTarget / eyeheightCurrent, 1.0f / smoothScalingIterativeTimesPerSecond / time);
+                iterativeRate = Math.Pow(eyeheightTarget / eyeheightCurrent, 1.0f / smoothScalingIterativeTimesPerSecond / time);
             }
             if ((iterativeRate > 1 && iterativeRate - 1 < 0.00000001) || (iterativeRate < 1 && 1 - iterativeRate < 0.00000001))
             {
@@ -789,13 +794,13 @@ namespace VRCScalerOSC.Controller
             }
             return iterativeRate;
         }
-        public static float CaculateScalingTimeByIterativeRate(float iterativeRate, float eyeheightTarget, float eyeheightCurrent, float smoothScalingIterativeTimesPerSecond)
+        public static double CaculateScalingTimeByIterativeRate(double iterativeRate, double eyeheightTarget, float eyeheightCurrent, double smoothScalingIterativeTimesPerSecond)
         {
             if (eyeheightCurrent == 0 || smoothScalingIterativeTimesPerSecond == 0)
             {
                 return 0f;
             }
-            return MathF.Abs(MathF.Log(eyeheightTarget / eyeheightCurrent, iterativeRate) / smoothScalingIterativeTimesPerSecond);
+            return Math.Abs(Math.Log(eyeheightTarget / eyeheightCurrent, iterativeRate) / smoothScalingIterativeTimesPerSecond);
         }
         public static bool TryConvertFtInToMeters(string input, out float meters)
         {
@@ -923,7 +928,7 @@ namespace VRCScalerOSC.Controller
                 long t = 0;
                 long d = 0;
                 long timeInterval = (long)_scaleData.SmoothScalingIterativeTimeInterval;
-                float eyeHeight;
+                double eyeHeight;
                 while (!ct.IsCancellationRequested && await timer.WaitForNextTickAsync(ct))
                 {
                     if (_scaleData == null)
@@ -939,14 +944,14 @@ namespace VRCScalerOSC.Controller
                         d += timeInterval;
 
                     }
-                    if (MathF.Abs(_scaleData.HeightOrginal - _scaleData.HeightTarget) < 0.0000001f ||
-                        MathF.Abs(_scaleData.HeightOrginal - _scaleData.HeightTarget) / _scaleData.HeightOrginal < 0.01f)
+                    if (Math.Abs(_scaleData.HeightOrginal - _scaleData.HeightTarget) < 0.0000001f ||
+                        Math.Abs(_scaleData.HeightOrginal - _scaleData.HeightTarget) / _scaleData.HeightOrginal < 0.01f)
                     {
                         FinalChangeEyeHeight(eyeHeight);
                         _scaleData.RealScalingTime = 0;
                         return;
                     }
-                    else if (_isInitialized && _scaleData.AutoAbort && MathF.Abs(eyeHeight - ViewModelScaler.CurrentEyeHeight * _scaleData.IterativeRate) / eyeHeight > 0.1f)
+                    else if (_isInitialized && _scaleData.AutoAbort && Math.Abs(eyeHeight - ViewModelScaler.CurrentEyeHeight * _scaleData.IterativeRate) / eyeHeight > 0.1f)
                     {
                         _scaleData.IsAutoAbort = true;
                         FinalChangeEyeHeight(eyeHeight, true);
@@ -962,7 +967,7 @@ namespace VRCScalerOSC.Controller
                     {
                         DoChangeEyeHeight(eyeHeight);
                     }
-                    if (_scaleData.IsFinish && MathF.Abs(_scaleData.HeightTarget - eyeHeight) > 0.0001)
+                    if (_scaleData.IsFinish && Math.Abs(_scaleData.HeightTarget - eyeHeight) > 0.0001)
                     {
                         FinalChangeEyeHeight(eyeHeight);
                         return;
@@ -971,7 +976,7 @@ namespace VRCScalerOSC.Controller
             }
             catch (OperationCanceledException) { }
         }
-        private void DoChangeEyeHeight(float eyeHeight)
+        private void DoChangeEyeHeight(double eyeHeight)
         {
             if (_scaleData == null)
             {
@@ -991,7 +996,7 @@ namespace VRCScalerOSC.Controller
             Debug.WriteLine("{0:yyyy/MM/dd HH:mm:ss:fff} Send {1}: {2:0.0000} Task={3}", DateTime.Now, "/avatar/eyeheight", eyeHeight, _serviceOSCProtocols?.SendTaskCount);
             _serviceOSCProtocols?.SendOscMessage(OSCData.GetEyeHeightByteArray(eyeHeight));
         }
-        private void FinalChangeEyeHeight(float eyeHeight, bool isAutoAbort = false)
+        private void FinalChangeEyeHeight(double eyeHeight, bool isAutoAbort = false)
         {
             if (_scaleData == null)
             {
@@ -1005,7 +1010,7 @@ namespace VRCScalerOSC.Controller
                 "/avatar/eyeheight",
                 eyeHeight,
                 _serviceOSCProtocols?.SendTaskCount,
-                isAutoAbort ? $"(Auto-Abort)\neyeHeight {eyeHeight}\nCurrent * Multiplier {ViewModelScaler.CurrentEyeHeight * _scaleData.IterativeRate}\n(eyeHeight-Current * Multiplier)/eyeHeight {MathF.Abs(eyeHeight - ViewModelScaler.CurrentEyeHeight * _scaleData.IterativeRate) / eyeHeight} " : $"(Finish)\nIterativeTimesPerSecond: {_scaleData.SmoothScalingIterativeTimesPerSecond}\nIterativeTime: {_scaleData.SmoothScalingIterativeTimeInterval:0.00}ms\nScalingTime: {_scaleData.ScalingTime:0.###}s\nRealScalingTime: {realScalingTime:0.###}s"
+                isAutoAbort ? $"(Auto-Abort)\neyeHeight {eyeHeight}\nCurrent * Multiplier {ViewModelScaler.CurrentEyeHeight * _scaleData.IterativeRate}\n(eyeHeight-Current * Multiplier)/eyeHeight {Math.Abs(eyeHeight - ViewModelScaler.CurrentEyeHeight * _scaleData.IterativeRate) / eyeHeight} " : $"(Finish)\nIterativeTimesPerSecond: {_scaleData.SmoothScalingIterativeTimesPerSecond}\nIterativeTime: {_scaleData.SmoothScalingIterativeTimeInterval:0.00}ms\nScalingTime: {_scaleData.ScalingTime:0.###}s\nRealScalingTime: {realScalingTime:0.###}s"
                 );
             _serviceOSCProtocols?.SendOscMessage(OSCData.GetEyeHeightByteArray(eyeHeight));
             _ctsScaler?.Cancel();
@@ -1021,20 +1026,20 @@ namespace VRCScalerOSC.Controller
                 _scalerTimer.Change(Timeout.Infinite, Timeout.Infinite);
                 return;
             }
-            if (MathF.Abs(_scaleData.HeightOrginal - _scaleData.HeightTarget) < 0.0000001f ||
-                MathF.Abs(_scaleData.HeightOrginal - _scaleData.HeightTarget) / _scaleData.HeightOrginal < 0.01f ||
-                _scaleData.AutoAbort && MathF.Abs(_scaleData.HeightNow - ViewModelScaler.CurrentEyeHeight * _scaleData.IterativeRate) / _scaleData.HeightNow > 0.1f ||
+            if (Math.Abs(_scaleData.HeightOrginal - _scaleData.HeightTarget) < 0.0000001f ||
+                Math.Abs(_scaleData.HeightOrginal - _scaleData.HeightTarget) / _scaleData.HeightOrginal < 0.01f ||
+                _scaleData.AutoAbort && Math.Abs(_scaleData.HeightNow - ViewModelScaler.CurrentEyeHeight * _scaleData.IterativeRate) / _scaleData.HeightNow > 0.1f ||
                 _scaleData.IsFinish
                 )
             {
                 return;
             }
-            float processValue =
-                    MathF.Log(_scaleData.HeightNow / _scaleData.HeightOrginal, _scaleData.IterativeRate) * 100f /
-                    MathF.Log(_scaleData.HeightTarget / _scaleData.HeightOrginal, _scaleData.IterativeRate);
-            float ScalingCountdownSeconds = _scaleData.ScalingTime -
-                MathF.Log(_scaleData.HeightNow / _scaleData.HeightOrginal, _scaleData.IterativeRate) * _scaleData.ScalingTime /
-                MathF.Log(_scaleData.HeightTarget / _scaleData.HeightOrginal, _scaleData.IterativeRate);
+            double processValue =
+                    Math.Log(_scaleData.HeightNow / _scaleData.HeightOrginal, _scaleData.IterativeRate) * 100f /
+                    Math.Log(_scaleData.HeightTarget / _scaleData.HeightOrginal, _scaleData.IterativeRate);
+            double ScalingCountdownSeconds = _scaleData.ScalingTime -
+                                             Math.Log(_scaleData.HeightNow / _scaleData.HeightOrginal, _scaleData.IterativeRate) * _scaleData.ScalingTime /
+                                             Math.Log(_scaleData.HeightTarget / _scaleData.HeightOrginal, _scaleData.IterativeRate);
 
             ViewModelScaler.ScalingPercentage = Math.Clamp((int)processValue, 0, 100);
             ViewModelScaler.ScalingCountdownSeconds = (int)ScalingCountdownSeconds;

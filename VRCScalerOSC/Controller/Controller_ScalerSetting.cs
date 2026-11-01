@@ -147,7 +147,7 @@ namespace VRCScalerOSC.Controller
             { }
             return;
         }
-        private static void LoadUserDataList(List<float> list, string listString, bool clear = true)
+        private static void LoadUserDataList(List<double> list, string listString, bool clear = true)
         {
             if (listString != "")
             {
@@ -223,7 +223,7 @@ namespace VRCScalerOSC.Controller
             catch
             { }
         }
-        private static string ListToString(List<float> list)
+        private static string ListToString(List<double> list)
         {
             string returnText = "";
             foreach (float item in list)

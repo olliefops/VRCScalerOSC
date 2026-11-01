@@ -60,8 +60,8 @@ namespace VRCScalerOSC.ViewModel
         private bool _fixedRate = true;
         public bool FixedRate { get => _fixedRate; set => SetProperty(ref _fixedRate, value); }
 
-        private bool _msRate = false;
-        public bool MSRate { get => _msRate; set => SetProperty(ref _msRate, value); }
+        private bool _cmsRate = false;
+        public bool CMSRate { get => _cmsRate; set => SetProperty(ref _cmsRate, value); }
 
         private bool _isMultiplier = false;
         public bool IsMultiplier { get => _isMultiplier; set => SetProperty(ref _isMultiplier, value); }
@@ -90,8 +90,8 @@ namespace VRCScalerOSC.ViewModel
         private float _avatarDefaultEyeHeight = 1f;
         public float AvatarDefaultEyeHeight { get => _avatarDefaultEyeHeight; set => SetProperty(ref _avatarDefaultEyeHeight, value); }
 
-        private float _prevMemuScalingRate = 1f;
-        public float PrevScalingRate { get => _prevMemuScalingRate; set => SetProperty(ref _prevMemuScalingRate, value); }
+        private double _prevMemuScalingRate = 1f;
+        public double PrevScalingRate { get => _prevMemuScalingRate; set => SetProperty(ref _prevMemuScalingRate, value); }
 
         private float _currentEyeHeight = 1f;
         public float CurrentEyeHeight { get => _currentEyeHeight; set => SetProperty(ref _currentEyeHeight, value); }
@@ -99,8 +99,8 @@ namespace VRCScalerOSC.ViewModel
         private float _targetEyeHeight = 10f;
         public float TargetEyeHeight { get => _targetEyeHeight; set => SetProperty(ref _targetEyeHeight, value); }
 
-        private float _currenttargetEyeHeight = 1f;
-        public float CurrentTargetEyeHeight { get => _currenttargetEyeHeight; set => SetProperty(ref _currenttargetEyeHeight, value); }
+        private double _currenttargetEyeHeight = 1f;
+        public double CurrentTargetEyeHeight { get => _currenttargetEyeHeight; set => SetProperty(ref _currenttargetEyeHeight, value); }
 
         private float _minEyeHeight = 1f;
         public float MinEyeHeight { get => _minEyeHeight; set => SetProperty(ref _minEyeHeight, value); }
@@ -109,20 +109,20 @@ namespace VRCScalerOSC.ViewModel
         public float MaxEyeHeight { get => _maxEyeHeight; set => SetProperty(ref _maxEyeHeight, value); }
         // --- scale value ---
 
-        private float _scalingTime = 3f;
-        public float ScalingTime { get => _scalingTime; set => SetProperty(ref _scalingTime, value); }
+        private double _scalingTime = 3f;
+        public double ScalingTime { get => _scalingTime; set => SetProperty(ref _scalingTime, value); }
 
-        private float _scalingRate = 2f;
-        public float ScalingRate { get => _scalingRate; set => SetProperty(ref _scalingRate, value); }
+        private double _scalingRate = 2f;
+        public double ScalingRate { get => _scalingRate; set => SetProperty(ref _scalingRate, value); }
         
-        private float _scalingMS = 0f;
-        public float ScalingMS { get => _scalingMS; set => SetProperty(ref _scalingMS, value); }
+        private float _scalingCms = 0f;
+        public float ScalingCMS { get => _scalingCms; set => SetProperty(ref _scalingCms, value); }
 
-        private float _iterativeRate = 0f;
-        public float IterativeRate { get => _iterativeRate; set => SetProperty(ref _iterativeRate, value); }
+        private double _iterativeRate = 0f;
+        public double IterativeRate { get => _iterativeRate; set => SetProperty(ref _iterativeRate, value); }
 
-        private float _smoothScalingIterativeTimesPerSecond = 50f;
-        public float SmoothScalingIterativeTimesPerSecond { get => _smoothScalingIterativeTimesPerSecond; set => SetProperty(ref _smoothScalingIterativeTimesPerSecond, value); }
+        private double _smoothScalingIterativeTimesPerSecond = 50f;
+        public double SmoothScalingIterativeTimesPerSecond { get => _smoothScalingIterativeTimesPerSecond; set => SetProperty(ref _smoothScalingIterativeTimesPerSecond, value); }
 
         // --- scaling gesture ---
         public int _gestureMode = 0;
@@ -164,14 +164,14 @@ namespace VRCScalerOSC.ViewModel
         public bool ShowGetWristInfoFailedLabel { get => _showGetWristInfoFailedLabel; set => SetProperty(ref _showGetWristInfoFailedLabel, value); }
         // --- combobox ---
 
-        public List<float> TargetEyeHeightList { get; } = [0.01f, 0.05f, 0.1f, 0.5f, 1f, 1.5f, 2f, 3f, 5f, 10f, 15f, 20f, 30f, 50f, 100f, 150f, 200f, 300f, 500f, 1000f, 1500f, 2000f, 3000f, 5000f, 10000f];
+        public List<double> TargetEyeHeightList { get; } = [0.01f, 0.05f, 0.1f, 0.5f, 1f, 1.5f, 2f, 3f, 5f, 10f, 15f, 20f, 30f, 50f, 100f, 150f, 200f, 300f, 500f, 1000f, 1500f, 2000f, 3000f, 5000f, 10000f];
 
-        public List<float> ScalingTimeDefaultList { get; } = [0f, 1f, 2f, 3f, 5f, 10f, 15f, 30f, 60f, 120f, 300f, 600f, 900f, 1800f, 3600f, 7200f, 10800f, 14400f, 18000f, 21600f, 25600f, 28800f];
+        public List<double> ScalingTimeDefaultList { get; } = [0f, 1f, 2f, 3f, 5f, 10f, 15f, 30f, 60f, 120f, 300f, 600f, 900f, 1800f, 3600f, 7200f, 10800f, 14400f, 18000f, 21600f, 25600f, 28800f];
 
-        public List<float> ScalingRateDefaultList { get; } = [1.1f, 1.2f, 1.3f, 1.5f, 2f, 5f, 10f, 20f, 50f, 100f, 200f, 500f, 1000f, 2000f, 5000f, 10000f];
+        public List<double> ScalingRateDefaultList { get; } = [1.1f, 1.2f, 1.3f, 1.5f, 2f, 5f, 10f, 20f, 50f, 100f, 200f, 500f, 1000f, 2000f, 5000f, 10000f];
 
         // --- defaultHeightValue ---
-        public List<float> DefaultHeightValueList { get; } = [ 0f,
+        public List<double> DefaultHeightValueList { get; } = [ 0f,
             0.01f, 0.05f, 0.1f, 0.5f, 1f,
             1.5f, 2f, 3f, 5f, 10f,
             15f, 20f, 30f, 50f, 100f,

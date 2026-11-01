@@ -490,14 +490,14 @@ namespace VRCScalerOSC.Model
                 _ => new OSCData([]),
             };
         }
-        public static byte[] GetEyeHeightByteArray(float eyeHeight)
+        public static byte[] GetEyeHeightByteArray(double eyeHeight)
         {
             byte[] data = [
             0x2F, 0x61, 0x76, 0x61, 0x74, 0x61, 0x72, 0x2F,
             0x65, 0x79, 0x65, 0x68, 0x65, 0x69, 0x67, 0x68,
             0x74, 0x00, 0x00, 0x00, 0x2C, 0x66, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00];
-            BinaryPrimitives.WriteSingleBigEndian(data.AsSpan()[24..], eyeHeight);
+            BinaryPrimitives.WriteDoubleBigEndian(data.AsSpan()[24..], eyeHeight);
             return data;
         }
     }

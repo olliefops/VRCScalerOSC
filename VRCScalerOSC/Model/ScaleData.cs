@@ -4,16 +4,16 @@ namespace VRCScalerOSC.Model
 {
     public class ScaleData
     {
-        public float SmoothScalingIterativeTimeInterval
+        public double SmoothScalingIterativeTimeInterval
         {
             get { return 1000f / SmoothScalingIterativeTimesPerSecond; }
         }
-        public float SmoothScalingIterativeTimesPerSecond { get; }
+        public double SmoothScalingIterativeTimesPerSecond { get; }
         public float HeightOrginal { get; }
-        public float HeightTarget { get; }
+        public double HeightTarget { get; }
         public float HeightMin { get; }
         public float HeightMax { get; }
-        public float ScalingTime { get; }
+        public double ScalingTime { get; }
         public float RealScalingTime
         {
             get
@@ -29,19 +29,19 @@ namespace VRCScalerOSC.Model
         private readonly Stopwatch? _stopwatch;
 
         private float? _realScalingTime;
-        private float _heightNow;
-        private float _iterativeRate;
+        private double _heightNow;
+        private double _iterativeRate;
         public bool IsAutoAbort { get; set; } = false;
-        public float HeightNow
+        public double HeightNow
         {
             get { return _heightNow; }
         }
-        public float IterativeRate
+        public double IterativeRate
         {
             get { return _iterativeRate; }
         }
         public bool AutoAbort { get; }
-        public ScaleData(float eyeheightTarget, float eyeheightNow, float scalingTime = 0f, bool autoAbort = true, float iterativeRate = 1f, float smoothScalingIterativeTimesPerSecond = 50f, float eyeheightMin = 0.01f, float eyeheightMax = 10000f)
+        public ScaleData(double eyeheightTarget, float eyeheightNow, double scalingTime = 0f, bool autoAbort = true, double iterativeRate = 1f, double smoothScalingIterativeTimesPerSecond = 50f, float eyeheightMin = 0.01f, float eyeheightMax = 10000f)
         {
             HeightMin = eyeheightMin;
             HeightMax = eyeheightMax;
@@ -56,11 +56,11 @@ namespace VRCScalerOSC.Model
             HeightMax = eyeheightMax;
             _stopwatch = Stopwatch.StartNew();
         }
-        public float NextEyeheight
+        public double NextEyeheight
         {
             get
             {
-                if (_heightNow < 0.05f && MathF.Abs(_heightNow - _heightNow * _iterativeRate) < 0.001f)
+                if (_heightNow < 0.05f && Math.Abs(_heightNow - _heightNow * _iterativeRate) < 0.001f)
                 {
                     if (_iterativeRate > 1)
                     {
@@ -79,7 +79,7 @@ namespace VRCScalerOSC.Model
                 if (_iterativeRate == 1f ||
                     (_iterativeRate > 1f && _heightNow > HeightTarget) ||
                     (_iterativeRate < 1f && _heightNow < HeightTarget) ||
-                    MathF.Abs(_heightNow - HeightTarget) / _heightNow < 0.01f)
+                    Math.Abs(_heightNow - HeightTarget) / _heightNow < 0.01f)
                 {
                     _heightNow = HeightTarget;
                 }
@@ -90,10 +90,10 @@ namespace VRCScalerOSC.Model
         {
             get
             {
-                return MathF.Abs(_heightNow - HeightTarget) / _heightNow < 0.01f;
+                return Math.Abs(_heightNow - HeightTarget) / _heightNow < 0.01f;
             }
         }
-        public void UpdateIterativeRate(float newIterativeRate)
+        public void UpdateIterativeRate(double newIterativeRate)
         {
             _iterativeRate = newIterativeRate;
         }

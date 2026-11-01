@@ -76,13 +76,13 @@ namespace VRCScalerOSC.View
                 var dfHeight = EyeHeight_Format(_viewModelScaler.AvatarDefaultEyeHeight).PadRight(10).AsSpan();
                 var scalTime = _viewModelScaler.ScalingTime.ToString("0.#####s").PadRight(10).AsSpan();
                 var scalRate = _viewModelScaler.ScalingRate.ToString("0.#####x").PadRight(10).AsSpan();
-                var scalMS = _viewModelScaler.ScalingMS.ToString("0.#####m/s").PadRight(10).AsSpan();
+                var scalCMS = _viewModelScaler.ScalingCMS.ToString("0.#####cm/s").PadRight(9).AsSpan();
                 var scalFact = _viewModelScaler.AvatarScaleFactor.ToString("0.#####x").PadRight(10).AsSpan();
                 var gestureMode = (GestureTextWorldScaling(_viewModelScaler.WorldScaling) + GestureTextDoubletapMute(_viewModelScaler.DoubleClickMuteCanSetGesture) + GestureText(_viewModelScaler.GestureMode)).AsSpan();
                 var min = _viewModelScaler.MinEyeHeight.ToString("0.00m").AsSpan();
                 var maxH = EyeHeight_Format(_viewModelScaler.MaxEyeHeight).PadRight(6).AsSpan();
                 var fxdrat = (_viewModelScaler.FixedRate ? "Enabled " : "Disabled").AsSpan();
-                var msrat = (_viewModelScaler.MSRate ? "Enabled " : "Disabled").AsSpan();
+                var msrat = (_viewModelScaler.CMSRate ? "Enabled " : "Disabled").AsSpan();
                 var autabo = (_viewModelScaler.AutoAbort ? "Enabled " : "Disabled").AsSpan();
 
                 int windowWidth = Console.WindowWidth - 2;
@@ -143,7 +143,7 @@ namespace VRCScalerOSC.View
                     screenBuilder.Append($"                                                                              ".PadRight(windowWidth)[..windowWidth] + "\n");
                     screenBuilder.Append($"t[number]          Set scaling time to [number]sec and disable FixedRate      ".PadRight(windowWidth)[..windowWidth] + "\n");
                     screenBuilder.Append($"r[number]          Set scaling rate to [number]x and enable FixedRate         ".PadRight(windowWidth)[..windowWidth] + "\n");
-                    screenBuilder.Append($"ms[number]         Set scaling time to [number]m/s and disable FixedRate      ".PadRight(windowWidth)[..windowWidth] + "\n");
+                    screenBuilder.Append($"cms[number]         Set scaling time to [number]m/s and disable FixedRate      ".PadRight(windowWidth)[..windowWidth] + "\n");
                     screenBuilder.Append($"f                  Switch FixedRate status Enabled / Disabled                 ".PadRight(windowWidth)[..windowWidth] + "\n");
                     screenBuilder.Append($"a                  Switch Auto-Abort status Enabled / Disabled                ".PadRight(windowWidth)[..windowWidth] + "\n");
                     screenBuilder.Append($"m[number]          Set the scaler max height to [number]m                     ".PadRight(windowWidth)[..windowWidth] + "\n");
@@ -154,8 +154,8 @@ namespace VRCScalerOSC.View
                 screenBuilder.Append($"------------------------------------------------------------------------------".PadRight(windowWidth)[..windowWidth] + "\n");
                 screenBuilder.Append($"[Current height]: {crHeight}[Scaling time]: {scalTime}[Scale]:      {scalFact}".PadRight(windowWidth)[..windowWidth] + "\n");
                 screenBuilder.Append($"[Default height]: {dfHeight}[Scaling rate]: {scalRate}[Gesture]:{gestureMode} ".PadRight(windowWidth)[..windowWidth] + "\n");
-                screenBuilder.Append($"[Min Height]: {min}         [Scaling M/S]: {scalMS} [Auto-Abort]: {autabo}  ".PadRight(windowWidth)[..windowWidth] + "\n");
-                screenBuilder.Append($"[Max Height]: {maxH}        [FixedRate]:    {fxdrat}  [MSRate]:    {msrat}    ".PadRight(windowWidth)[..windowWidth] + "\n");
+                screenBuilder.Append($"[Min Height]: {min}         [Scaling cm/s]: {scalCMS} [Auto-Abort]: {autabo}  ".PadRight(windowWidth)[..windowWidth] + "\n");
+                screenBuilder.Append($"[Max Height]: {maxH}        [FixedRate]:    {fxdrat}  [CMSRate]:    {msrat}   ".PadRight(windowWidth)[..windowWidth] + "\n");
                 screenBuilder.Append($"------------------------------------------------------------------------------".PadRight(windowWidth)[..windowWidth] + "\n");
                 screenBuilder.Append($"{StateText(_viewModelScaler)}                                                 ".PadRight(windowWidth)[..windowWidth] + "\n");
                 screenBuilder.Append($"                                                                              ".PadRight(windowWidth)[..windowWidth] + "\n");
@@ -247,9 +247,9 @@ namespace VRCScalerOSC.View
             {
                 command = command.Insert(2, " ");
             }
-            if (command.Length > 2 && command.Contains("ms"))
+            if (command.Length > 2 && command.Contains("cms"))
             {
-                command = command.Insert(2, " ");
+                command = command.Insert(3, " ");
             }
             if (command.Length > 5 && (command.Contains("portr") || command.Contains("ports")))
             {
@@ -311,25 +311,25 @@ namespace VRCScalerOSC.View
                 if (commandOrder[0] == "t")
                 {
                     _viewModelScaler.FixedRate = false;
-                    _viewModelScaler.MSRate = false;
+                    _viewModelScaler.CMSRate = false;
                     _controller_Scaler.SetFixedRate(_viewModelScaler.FixedRate);
-                    _controller_Scaler.SetMSRate(_viewModelScaler.MSRate);
+                    _controller_Scaler.SetCMSRate(_viewModelScaler.CMSRate);
                     _controller_Scaler.SetScalingTime(valueF);
                 }
-                if (commandOrder[0] == "ms")
+                if (commandOrder[0] == "cms")
                 {
                     _viewModelScaler.FixedRate = false;
-                    _viewModelScaler.MSRate = true;
+                    _viewModelScaler.CMSRate = true;
                     _controller_Scaler.SetFixedRate(_viewModelScaler.FixedRate);
-                    _controller_Scaler.SetMSRate(_viewModelScaler.MSRate);
-                    _controller_Scaler.SetScalingTimeByMS(valueF);
+                    _controller_Scaler.SetCMSRate(_viewModelScaler.CMSRate);
+                    _controller_Scaler.SetScalingTimeByCMS(valueF);
                 }
                 else if (commandOrder[0] == "r")
                 {
                     _viewModelScaler.FixedRate = true;
-                    _viewModelScaler.MSRate = false;
+                    _viewModelScaler.CMSRate = false;
                     _controller_Scaler.SetFixedRate(_viewModelScaler.FixedRate);
-                    _controller_Scaler.SetMSRate(_viewModelScaler.MSRate);
+                    _controller_Scaler.SetCMSRate(_viewModelScaler.CMSRate);
                     _controller_Scaler.SetScalingRate(valueF);
                 }
                 else if (commandOrder[1].Last() == 'p')

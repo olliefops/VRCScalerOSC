@@ -75,7 +75,7 @@ namespace VRCScalerOSC_Windows
             comboBoxGesture.SelectedIndexChanged += comboBoxGesture_SelectedIndexChanged;
         }
 
-        public void InitScaleButtonSetText(List<float> MenuScaleValueList)
+        public void InitScaleButtonSetText(List<double> MenuScaleValueList)
         {
             Control[] ScaleSetList = [buttonSet1, buttonSet2, buttonSet3, buttonSet4, buttonSet5, buttonSet6, buttonSet7, buttonSet8, buttonSet9, buttonSet10, buttonSet11, buttonSet12, buttonSet13, buttonSet14, buttonSet15, buttonSet16, buttonSet17, buttonSet18, buttonSet19, buttonSet20, buttonSet21, buttonSet22, buttonSet23, buttonSet24, buttonSet25, buttonSet26, buttonSet27, buttonSet28, buttonSet29, buttonSet30, buttonSet31, buttonSet32, buttonSet33];
             int n = 0;
@@ -227,7 +227,7 @@ namespace VRCScalerOSC_Windows
             {
                 _controllerScaler.StartScaling(_viewModelScaler.IsMultiplier, _viewModelScaler.FixedRate, eyeHeight,
                     float.TryParse(comboBoxScalingTime.Text, out float scalingTime) ? scalingTime : 0f,
-                    float.TryParse(comboBoxScalingRate.Text, out float scalingRate) ? scalingRate : float.MaxValue);
+                    double.TryParse(comboBoxScalingRate.Text, out double scalingRate) ? scalingRate : double.MaxValue);
             }
         }
         private void buttonStop_Click(object sender, EventArgs e)
@@ -519,7 +519,7 @@ namespace VRCScalerOSC_Windows
         }
         private void comboBoxScalingRate_TextChanged(object? sender, EventArgs e)
         {
-            if (checkBoxFixedRate.Checked && float.TryParse(comboBoxScalingRate.Text, out float scalingRate) && float.TryParse(comboBoxTargetEyeHeight.Text, out float eyeHeight))
+            if (checkBoxFixedRate.Checked && double.TryParse(comboBoxScalingRate.Text, out double scalingRate) && float.TryParse(comboBoxTargetEyeHeight.Text, out float eyeHeight))
             {
                 comboBoxScalingRate.TextChanged -= comboBoxScalingRate_TextChanged;
                 comboBoxScalingTime.TextChanged -= comboBoxScalingTime_TextChanged;
