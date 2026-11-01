@@ -497,7 +497,7 @@ namespace VRCScalerOSC.Model
             0x65, 0x79, 0x65, 0x68, 0x65, 0x69, 0x67, 0x68,
             0x74, 0x00, 0x00, 0x00, 0x2C, 0x66, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00];
-            BinaryPrimitives.WriteDoubleBigEndian(data.AsSpan()[24..], eyeHeight);
+            BinaryPrimitives.WriteSingleBigEndian(data.AsSpan()[24..], (float)eyeHeight);
             return data;
         }
     }
