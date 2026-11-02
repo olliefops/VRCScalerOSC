@@ -607,13 +607,13 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                     }
                 }
             });
-            functions.AddEvent($"{controller.ScalerOSCPathPrefix}/SetScaleMS", (isInitialized, service, data) =>
+            functions.AddEvent($"{controller.ScalerOSCPathPrefix}/SetScaleCentimetersPerSecond", (isInitialized, service, data) =>
             {
                 if (data.ValueF.HasValue)
                 {
-                    controller.SetCMSRate(true);
-                    controller.SetFixedRate(false);
-                    controller.SetScalingTimeByCMS(data.ValueF.Value);
+                    controller.SetFixedRate(true);
+                    controller.SetCentimetersPerSecondRate(true);
+                    controller.SetScalingRateByCentimeterPerSecond(data.ValueF.Value);
                 }
             });
             functions.AddEvent($"{controller.ScalerOSCPathPrefix}/BackAvatarDefaultHeight", (isInitialized, service, data) =>

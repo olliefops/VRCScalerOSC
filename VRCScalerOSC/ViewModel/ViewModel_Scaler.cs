@@ -60,8 +60,8 @@ namespace VRCScalerOSC.ViewModel
         private bool _fixedRate = true;
         public bool FixedRate { get => _fixedRate; set => SetProperty(ref _fixedRate, value); }
 
-        private bool _cmsRate = false;
-        public bool CMSRate { get => _cmsRate; set => SetProperty(ref _cmsRate, value); }
+        private bool _centimetersPerSecondRate = false;
+        public bool CentimetersPerSecondRate { get => _centimetersPerSecondRate; set => SetProperty(ref _centimetersPerSecondRate, value); }
 
         private bool _isMultiplier = false;
         public bool IsMultiplier { get => _isMultiplier; set => SetProperty(ref _isMultiplier, value); }

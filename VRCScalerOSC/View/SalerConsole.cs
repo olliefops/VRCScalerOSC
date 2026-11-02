@@ -82,7 +82,7 @@ namespace VRCScalerOSC.View
                 var min = _viewModelScaler.MinEyeHeight.ToString("0.00m").AsSpan();
                 var maxH = EyeHeight_Format(_viewModelScaler.MaxEyeHeight).PadRight(6).AsSpan();
                 var fxdrat = (_viewModelScaler.FixedRate ? "Enabled " : "Disabled").AsSpan();
-                var msrat = (_viewModelScaler.CMSRate ? "Enabled " : "Disabled").AsSpan();
+                var msrat = (_viewModelScaler.CentimetersPerSecondRate ? "Enabled " : "Disabled").AsSpan();
                 var autabo = (_viewModelScaler.AutoAbort ? "Enabled " : "Disabled").AsSpan();
 
                 int windowWidth = Console.WindowWidth - 2;
@@ -311,25 +311,25 @@ namespace VRCScalerOSC.View
                 if (commandOrder[0] == "t")
                 {
                     _viewModelScaler.FixedRate = false;
-                    _viewModelScaler.CMSRate = false;
+                    _viewModelScaler.CentimetersPerSecondRate = false;
                     _controller_Scaler.SetFixedRate(_viewModelScaler.FixedRate);
-                    _controller_Scaler.SetCMSRate(_viewModelScaler.CMSRate);
+                    _controller_Scaler.SetCentimetersPerSecondRate(_viewModelScaler.CentimetersPerSecondRate);
                     _controller_Scaler.SetScalingTime(valueD);
                 }
                 if (commandOrder[0] == "cms")
                 {
-                    _viewModelScaler.FixedRate = false;
-                    _viewModelScaler.CMSRate = true;
+                    _viewModelScaler.FixedRate = true;
+                    _viewModelScaler.CentimetersPerSecondRate = true;
                     _controller_Scaler.SetFixedRate(_viewModelScaler.FixedRate);
-                    _controller_Scaler.SetCMSRate(_viewModelScaler.CMSRate);
-                    _controller_Scaler.SetScalingTimeByCMS(valueD);
+                    _controller_Scaler.SetCentimetersPerSecondRate(_viewModelScaler.CentimetersPerSecondRate);
+                    _controller_Scaler.SetScalingRateByCentimeterPerSecond(valueD);
                 }
                 else if (commandOrder[0] == "r")
                 {
                     _viewModelScaler.FixedRate = true;
-                    _viewModelScaler.CMSRate = false;
+                    _viewModelScaler.CentimetersPerSecondRate = false;
                     _controller_Scaler.SetFixedRate(_viewModelScaler.FixedRate);
-                    _controller_Scaler.SetCMSRate(_viewModelScaler.CMSRate);
+                    _controller_Scaler.SetCentimetersPerSecondRate(_viewModelScaler.CentimetersPerSecondRate);
                     _controller_Scaler.SetScalingRate(valueD);
                 }
                 else if (commandOrder[1].Last() == 'p')
