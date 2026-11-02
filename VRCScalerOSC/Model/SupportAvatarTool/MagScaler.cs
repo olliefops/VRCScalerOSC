@@ -562,7 +562,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                 scale = 10000;
             }
 
-            controller.StartScaling(false, viewModel.FixedRate, scale, viewModel.ScalingTime, viewModel.ScalingRate);
+            controller.StartScaling(false, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, scale, viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond);
         }
     }
 }

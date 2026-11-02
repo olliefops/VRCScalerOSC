@@ -89,7 +89,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                             {
                                 service?.SendOscMessage(new OSCData("/avatar/parameters/" + param, data.TypeString, 0));
                             }
-                            controller.StartScaling(false, viewModel.FixedRate, nextEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate);
+                            controller.StartScaling(false, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, nextEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond);
                         }
                     };
                 }

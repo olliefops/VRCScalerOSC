@@ -269,7 +269,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
             {
                 if (isInitialized && data.ValueB.HasValue && data.ValueB.Value)
                 {
-                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate); //Scaling setting value w smooth time
+                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond); //Scaling setting value w smooth time
                     service?.SendOscMessage(OSCData.GetFalseOSCData(data.Addr, data.TypeString));
                 }
             });
@@ -277,7 +277,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
             {
                 if (isInitialized && data.ValueB.HasValue && data.ValueB.Value)
                 {
-                    controller.StartScaling(false, viewModel.FixedRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate); //Scaling setting value in meters with smooth time
+                    controller.StartScaling(false, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate); //Scaling setting value in meters with smooth time
                     service?.SendOscMessage(OSCData.GetFalseOSCData(data.Addr, data.TypeString));
                 }
             });
@@ -285,7 +285,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
             {
                 if (isInitialized && data.ValueB.HasValue && data.ValueB.Value)
                 {
-                    controller.StartScaling(true, viewModel.FixedRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate); //Scaling setting value in multiplier with smooth time
+                    controller.StartScaling(true, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate); //Scaling setting value in multiplier with smooth time
                     service?.SendOscMessage(OSCData.GetFalseOSCData(data.Addr, data.TypeString));
                 }
             });
@@ -317,7 +317,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
             {
                 if (isInitialized && data.ValueB.HasValue && data.ValueB.Value)
                 {
-                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate); //Scaling setting value w smooth time
+                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond); //Scaling setting value w smooth time
                     service?.SendOscMessage(OSCData.GetFalseOSCData(data.Addr, data.TypeString));
                 }
             });
@@ -325,7 +325,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
             {
                 if (isInitialized && data.ValueB.HasValue && data.ValueB.Value)
                 {
-                    controller.StartScaling(false, viewModel.FixedRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate); //Scaling setting value in meters with smooth time
+                    controller.StartScaling(false, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond); //Scaling setting value in meters with smooth time
                     service?.SendOscMessage(OSCData.GetFalseOSCData(data.Addr, data.TypeString));
                 }
             });
@@ -333,7 +333,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
             {
                 if (isInitialized && data.ValueB.HasValue && data.ValueB.Value)
                 {
-                    controller.StartScaling(true, viewModel.FixedRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate); //Scaling setting value in multiplier with smooth time
+                    controller.StartScaling(true, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, viewModel.TargetEyeHeight, viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond); //Scaling setting value in multiplier with smooth time
                     service?.SendOscMessage(OSCData.GetFalseOSCData(data.Addr, data.TypeString));
                 }
             });
@@ -362,49 +362,49 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
             {
                 if (isInitialized && data.ValueF.HasValue && data.ValueF.Value != 0)
                 {
-                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, data.ValueF.Value, viewModel.ScalingTime); //Scaling a input value with smoothtime
+                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, data.ValueF.Value, viewModel.ScalingTime); //Scaling a input value with smoothtime
                 }
             });
             functions.AddEvent($"{controller.ScalerOSCPathPrefix}/Meters/SmoothScalingEyeHeight", (isInitialized, service, data) =>
             {
                 if (isInitialized && data.ValueF.HasValue && data.ValueF.Value != 0)
                 {
-                    controller.StartScaling(false, viewModel.FixedRate, data.ValueF.Value, viewModel.ScalingTime); //Scaling a input value in meters with smoothtime
+                    controller.StartScaling(false, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, data.ValueF.Value, viewModel.ScalingTime); //Scaling a input value in meters with smoothtime
                 }
             });
             functions.AddEvent($"{controller.ScalerOSCPathPrefix}/Multiplier/SmoothScalingEyeHeight", (isInitialized, service, data) =>
             {
                 if (isInitialized && data.ValueF.HasValue && data.ValueF.Value != 0)
                 {
-                    controller.StartScaling(true, viewModel.FixedRate, data.ValueF.Value, viewModel.ScalingTime); //Scaling a input in multiplier value with smoothtime
+                    controller.StartScaling(true, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, data.ValueF.Value, viewModel.ScalingTime); //Scaling a input in multiplier value with smoothtime
                 }
             });
             functions.AddEvent($"{controller.ScalerOSCPathPrefix}/ScalingPercentage", (isInitialized, service, data) =>
             {
                 if (isInitialized && data.ValueF.HasValue && data.ValueF.Value != 0)
                 {
-                    controller.StartScaling(false, false, data.ValueF.Value * viewModel.CurrentEyeHeight / 100f); //Scaling a input value in percentage without smoothtime
+                    controller.StartScaling(false, false, false, data.ValueF.Value * viewModel.CurrentEyeHeight / 100f); //Scaling a input value in percentage without smoothtime
                 }
             });
             functions.AddEvent($"{controller.ScalerOSCPathPrefix}/SmoothScalingPercentage", (isInitialized, service, data) =>
             {
                 if (isInitialized && data.ValueF.HasValue && data.ValueF.Value != 0)
                 {
-                    controller.StartScaling(false, viewModel.FixedRate, data.ValueF.Value * viewModel.CurrentEyeHeight / 100f, viewModel.ScalingTime, viewModel.ScalingRate); //Scaling a input value in percentage with smoothtime
+                    controller.StartScaling(false, viewModel.FixedRate, false, data.ValueF.Value * viewModel.CurrentEyeHeight / 100f, viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond); //Scaling a input value in percentage with smoothtime
                 }
             });
             functions.AddEvent($"{controller.ScalerOSCPathPrefix}/ScalingDiffPercentage", (isInitialized, service, data) =>
             {
                 if (isInitialized && data.ValueF.HasValue && data.ValueF.Value != 0)
                 {
-                    controller.StartScaling(false, false, viewModel.CurrentEyeHeight * (1 + data.ValueF.Value / 100f)); //Scaling a input value in diff-percentage with smoothtime
+                    controller.StartScaling(false, false, false, viewModel.CurrentEyeHeight * (1 + data.ValueF.Value / 100f)); //Scaling a input value in diff-percentage with smoothtime
                 }
             });
             functions.AddEvent($"{controller.ScalerOSCPathPrefix}/SmoothScalingDiffPercentage", (isInitialized, service, data) =>
             {
                 if (isInitialized && data.ValueF.HasValue && data.ValueF.Value != 0)
                 {
-                    controller.StartScaling(false, viewModel.FixedRate, viewModel.CurrentEyeHeight * (1 + data.ValueF.Value / 100f), viewModel.ScalingTime, viewModel.ScalingRate); //Scaling a input value in diff-percentage with smoothtime
+                    controller.StartScaling(false, viewModel.FixedRate, false, viewModel.CurrentEyeHeight * (1 + data.ValueF.Value / 100f), viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond); //Scaling a input value in diff-percentage with smoothtime
                 }
             });
             functions.AddEvent($"{controller.ScalerOSCPathPrefix}/SetEyeHeight", (isInitialized, service, data) =>
@@ -893,7 +893,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                         value = viewModel.DefaultHeightValueList[index]; // Scaling a default value without smoothtime
                     }
                     value = value == 0f ? -1f : value;
-                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, value);
+                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, value);
                 }
             }
         }
@@ -914,7 +914,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                         value = viewModel.DefaultHeightValueList[index]; // Scaling a default value with smoothtime
                     }
                     value = value == 0f ? -1f : value;
-                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, value, viewModel.ScalingTime, viewModel.ScalingRate);
+                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, value, viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond);
                 }
             }
         }
@@ -936,7 +936,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                     }
                     value *= viewModel.CurrentEyeHeight;
                     value = value == 0f ? -1f : value;
-                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, value); //Scaling a input value in percentage without smoothtime
+                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, value); //Scaling a input value in percentage without smoothtime
                 }
             }
         }
@@ -958,7 +958,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                     }
                     value = viewModel.CurrentEyeHeight * (1 + value);
                     value = value == 0f ? -1f : value;
-                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, value); //Scaling a input value in diff-percentage without smoothtime
+                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, value); //Scaling a input value in diff-percentage without smoothtime
                 }
             }
         }
@@ -980,7 +980,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                     }
                     value *= viewModel.CurrentEyeHeight;
                     value = value == 0f ? -1f : value;
-                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, value, viewModel.ScalingTime, viewModel.ScalingRate);  //Scaling a input value in percentage with smoothtime
+                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, value, viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond);  //Scaling a input value in percentage with smoothtime
                 }
             }
         }
@@ -1002,7 +1002,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                     }
                     value = viewModel.CurrentEyeHeight * (1 + value);
                     value = value == 0f ? -1f : value;
-                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, value, viewModel.ScalingTime, viewModel.ScalingRate); //Scaling a input value in diff-percentage with smoothtime
+                    controller.StartScaling(viewModel.IsMultiplier, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, value, viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond); //Scaling a input value in diff-percentage with smoothtime
                 }
             }
         }

@@ -40,7 +40,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                         if (data.ValueB.HasValue)
                         {
                             RSSAdjScaleRealSize = data.ValueB.Value;
-                            controller.StartScaling(false, viewModel.FixedRate, ScaleModify(), viewModel.ScalingTime, viewModel.ScalingRate);
+                            controller.StartScaling(false, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, ScaleModify(), viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond);
                         }
                     };
                 }
@@ -59,7 +59,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                                 5 => 100000f,
                                 _ => 100f,
                             };
-                            controller.StartScaling(false, viewModel.FixedRate, ScaleModify(), viewModel.ScalingTime, viewModel.ScalingRate);
+                            controller.StartScaling(false, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, ScaleModify(), viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond);
                         }
                     };
                 }
@@ -70,7 +70,7 @@ namespace VRCScalerOSC.Model.SupportAvatarTool
                         if (data.ValueF.HasValue)
                         {
                             RSSAdjScaleAdjDisplay = data.ValueF.Value;
-                            controller.StartScaling(false, viewModel.FixedRate, ScaleModify(), viewModel.ScalingTime, viewModel.ScalingRate);
+                            controller.StartScaling(false, viewModel.FixedRate, viewModel.CentimetersPerSecondRate, ScaleModify(), viewModel.ScalingTime, viewModel.ScalingRate, viewModel.ScalingCentimetersPerSecond);
                         }
                     };
                 }

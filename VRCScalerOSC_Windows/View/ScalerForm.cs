@@ -225,7 +225,7 @@ namespace VRCScalerOSC_Windows
         {
             if (float.TryParse(comboBoxTargetEyeHeight.Text, out float eyeHeight))
             {
-                _controllerScaler.StartScaling(_viewModelScaler.IsMultiplier, _viewModelScaler.FixedRate, eyeHeight,
+                _controllerScaler.StartScaling(_viewModelScaler.IsMultiplier, _viewModelScaler.FixedRate,  _viewModelScaler.CentimetersPerSecondRate, eyeHeight,
                     float.TryParse(comboBoxScalingTime.Text, out float scalingTime) ? scalingTime : 0f,
                     double.TryParse(comboBoxScalingRate.Text, out double scalingRate) ? scalingRate : double.MaxValue);
             }
@@ -493,11 +493,11 @@ namespace VRCScalerOSC_Windows
             {
                 if (value.Contains('%'))
                 {
-                    _controllerScaler.StartScaling(_viewModelScaler.IsMultiplier, !checkBoxInstant.Checked, _viewModelScaler.CurrentEyeHeight * (1 + eyeHeight / 100f), -1, checkBoxInstant.Checked ? float.MaxValue : 2f);
+                    _controllerScaler.StartScaling(_viewModelScaler.IsMultiplier, !checkBoxInstant.Checked,  _viewModelScaler.CentimetersPerSecondRate, _viewModelScaler.CurrentEyeHeight * (1 + eyeHeight / 100f), -1, checkBoxInstant.Checked ? float.MaxValue : 2f);
                 }
                 else
                 {
-                    _controllerScaler.StartScaling(_viewModelScaler.IsMultiplier, !checkBoxInstant.Checked, eyeHeight, -1, checkBoxInstant.Checked ? float.MaxValue : 2f);
+                    _controllerScaler.StartScaling(_viewModelScaler.IsMultiplier, !checkBoxInstant.Checked, _viewModelScaler.CentimetersPerSecondRate, eyeHeight, -1, checkBoxInstant.Checked ? float.MaxValue : 2f);
                 }
 
             }

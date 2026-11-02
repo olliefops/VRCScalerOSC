@@ -76,7 +76,7 @@ namespace VRCScalerOSC.View
                 var dfHeight = EyeHeight_Format(_viewModelScaler.AvatarDefaultEyeHeight).PadRight(10).AsSpan();
                 var scalTime = _viewModelScaler.ScalingTime.ToString("0.#####s").PadRight(10).AsSpan();
                 var scalRate = _viewModelScaler.ScalingRate.ToString("0.#####x").PadRight(10).AsSpan();
-                var scalCMS = _viewModelScaler.ScalingCMS.ToString("0.#####cm/s").PadRight(9).AsSpan();
+                var scalCMS = _viewModelScaler.ScalingCentimetersPerSecond.ToString("0.#####cm/s").PadRight(9).AsSpan();
                 var scalFact = _viewModelScaler.AvatarScaleFactor.ToString("0.#####x").PadRight(10).AsSpan();
                 var gestureMode = (GestureTextWorldScaling(_viewModelScaler.WorldScaling) + GestureTextDoubletapMute(_viewModelScaler.DoubleClickMuteCanSetGesture) + GestureText(_viewModelScaler.GestureMode)).AsSpan();
                 var min = _viewModelScaler.MinEyeHeight.ToString("0.00m").AsSpan();
@@ -318,7 +318,7 @@ namespace VRCScalerOSC.View
                 }
                 if (commandOrder[0] == "cms")
                 {
-                    _viewModelScaler.FixedRate = true;
+                    _viewModelScaler.FixedRate = false;
                     _viewModelScaler.CentimetersPerSecondRate = true;
                     _controller_Scaler.SetFixedRate(_viewModelScaler.FixedRate);
                     _controller_Scaler.SetCentimetersPerSecondRate(_viewModelScaler.CentimetersPerSecondRate);
@@ -338,11 +338,11 @@ namespace VRCScalerOSC.View
                 }
                 if (commandOrder[0] == "h")
                 {
-                    _controller_Scaler.StartScaling(commandOrder[1].Last() == 'x', _viewModelScaler.FixedRate, valueD);
+                    _controller_Scaler.StartScaling(commandOrder[1].Last() == 'x', _viewModelScaler.FixedRate, _viewModelScaler.CentimetersPerSecondRate, valueD);
                 }
                 else if (commandOrder[0] == "s")
                 {
-                    _controller_Scaler.StartScaling(commandOrder[1].Last() == 'x', _viewModelScaler.FixedRate, valueD, _viewModelScaler.ScalingTime, _viewModelScaler.ScalingRate);
+                    _controller_Scaler.StartScaling(commandOrder[1].Last() == 'x', _viewModelScaler.FixedRate,  _viewModelScaler.CentimetersPerSecondRate, valueD, _viewModelScaler.ScalingTime, _viewModelScaler.ScalingRate);
                 }
                 else if (commandOrder[0] == "g")
                 {
@@ -359,11 +359,11 @@ namespace VRCScalerOSC.View
                 }
                 else if (commandOrder[0] == "q" && valueD >= 1 && valueD <= 25)
                 {
-                    _controller_Scaler.StartScaling(false, _viewModelScaler.FixedRate, _viewModelScaler.DefaultHeightValueList[Convert.ToInt32(valueD)]);
+                    _controller_Scaler.StartScaling(false, _viewModelScaler.FixedRate,  _viewModelScaler.CentimetersPerSecondRate, _viewModelScaler.DefaultHeightValueList[Convert.ToInt32(valueD)]);
                 }
                 else if (commandOrder[0] == "w" && valueD >= 1 && valueD <= 25)
                 {
-                    _controller_Scaler.StartScaling(false, _viewModelScaler.FixedRate, _viewModelScaler.DefaultHeightValueList[Convert.ToInt32(valueD)], _viewModelScaler.ScalingTime, _viewModelScaler.ScalingRate);
+                    _controller_Scaler.StartScaling(false, _viewModelScaler.FixedRate,  _viewModelScaler.CentimetersPerSecondRate, _viewModelScaler.DefaultHeightValueList[Convert.ToInt32(valueD)], _viewModelScaler.ScalingTime, _viewModelScaler.ScalingRate);
                 }
             }
             return true;

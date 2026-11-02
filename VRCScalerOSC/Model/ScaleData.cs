@@ -14,6 +14,8 @@ namespace VRCScalerOSC.Model
         public float HeightMin { get; }
         public float HeightMax { get; }
         public double ScalingTime { get; }
+        public double CentimetersPerSecond { get; }
+
         public float RealScalingTime
         {
             get
@@ -31,6 +33,7 @@ namespace VRCScalerOSC.Model
         private float? _realScalingTime;
         private double _heightNow;
         private double _iterativeRate;
+        
         public bool IsAutoAbort { get; set; } = false;
         public double HeightNow
         {
@@ -41,11 +44,12 @@ namespace VRCScalerOSC.Model
             get { return _iterativeRate; }
         }
         public bool AutoAbort { get; }
-        public ScaleData(double eyeheightTarget, float eyeheightNow, double scalingTime = 0f, bool autoAbort = true, double iterativeRate = 1f, double smoothScalingIterativeTimesPerSecond = 50f, float eyeheightMin = 0.01f, float eyeheightMax = 10000f)
+        public ScaleData(double eyeheightTarget, float eyeheightNow, double scalingTime = 0f, double centimetersPerSecond = 0d, bool autoAbort = true, double iterativeRate = 1f, double smoothScalingIterativeTimesPerSecond = 50f, float eyeheightMin = 0.01f, float eyeheightMax = 10000f)
         {
             HeightMin = eyeheightMin;
             HeightMax = eyeheightMax;
             HeightOrginal = eyeheightNow;
+            CentimetersPerSecond = centimetersPerSecond;
             SmoothScalingIterativeTimesPerSecond = smoothScalingIterativeTimesPerSecond;
             HeightTarget = eyeheightTarget < eyeheightMin ? eyeheightMin : eyeheightTarget > eyeheightMax ? eyeheightMax : eyeheightTarget;
             _heightNow = eyeheightNow < eyeheightMin ? eyeheightMin : eyeheightNow > eyeheightMax ? eyeheightMax : eyeheightNow;
@@ -60,30 +64,47 @@ namespace VRCScalerOSC.Model
         {
             get
             {
-                if (_heightNow < 0.05f && Math.Abs(_heightNow - _heightNow * _iterativeRate) < 0.001f)
+                if (CentimetersPerSecond > 0d)
                 {
-                    if (_iterativeRate > 1)
-                    {
-                        _heightNow += 0.001f;
-                    }
-                    if (_iterativeRate < 1)
-                    {
-                        _heightNow -= 0.001f;
-                    }
+                    double delta = (CentimetersPerSecond / 100d) / SmoothScalingIterativeTimesPerSecond;
+
+                    if (_heightNow < HeightTarget)
+                        _heightNow += delta;
+                    else if (_heightNow > HeightTarget)
+                        _heightNow -= delta;
+
+                    if (Math.Abs(_heightNow - HeightTarget) <= delta)
+                        _heightNow = HeightTarget;
+
+                    return _heightNow;
                 }
                 else
                 {
-                    _heightNow *= _iterativeRate;
-                }
+                    if (_heightNow < 0.05f && Math.Abs(_heightNow - _heightNow * _iterativeRate) < 0.001f)
+                    {
+                        if (_iterativeRate > 1)
+                        {
+                            _heightNow += 0.001f;
+                        }
+                        if (_iterativeRate < 1)
+                        {
+                            _heightNow -= 0.001f;
+                        }
+                    }
+                    else
+                    {
+                        _heightNow *= _iterativeRate;
+                    }
 
-                if (_iterativeRate == 1f ||
-                    (_iterativeRate > 1f && _heightNow > HeightTarget) ||
-                    (_iterativeRate < 1f && _heightNow < HeightTarget) ||
-                    Math.Abs(_heightNow - HeightTarget) / _heightNow < 0.01f)
-                {
-                    _heightNow = HeightTarget;
+                    if (_iterativeRate == 1f ||
+                        (_iterativeRate > 1f && _heightNow > HeightTarget) ||
+                        (_iterativeRate < 1f && _heightNow < HeightTarget) ||
+                        Math.Abs(_heightNow - HeightTarget) / _heightNow < 0.01f)
+                    {
+                        _heightNow = HeightTarget;
+                    }
+                    return _heightNow;   
                 }
-                return _heightNow;
             }
         }
         public bool IsFinish
